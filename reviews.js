@@ -3,21 +3,24 @@ const { buildSubgraphSchema } = require('@apollo/subgraph');
 
 const typeDefs = gql`
 extend schema
-    @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@shareable", "@external"])
+    @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@external", "@requires"])
 
 
 interface Node {
     id: ID!
+    authorized: Boolean!
 }
 
-type Review implements Node{
+type Review implements Node {
     id: ID!
+    authorized: Boolean!
     body: String
 }
 
 extend type Book @key(fields: "id") {
     id: ID! @external
-    reviews: [Review]
+    authorized: Boolean! @external
+    reviews: [Review] @requires(fields: "authorized")
 }
 
 type Query {
@@ -27,14 +30,16 @@ type Query {
 
 const reviews = [
     {
-        id:   'Review:awakening1',
-        book: 'Book:awakening',
-        body: 'Review about Awakening'
+        id:         'Review:awakening1',
+        authorized: false,
+        book:       'Book:awakening',
+        body:       'Review about Awakening'
     },
     {
-        id:   'Review:glass1',
-        book: 'Book:glass',
-        body: 'Review about City of Glass'
+        id:         'Review:glass1',
+        authorized: true,
+        book:       'Book:glass',
+        body:       'Review about City of Glass'
     },
 ];
 

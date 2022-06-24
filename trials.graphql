@@ -21,6 +21,7 @@ type Author implements Node
   @join__type(graph: BOOKS, key: "id")
 {
   id: ID!
+  authorized: Boolean!
   name: String
 }
 
@@ -30,9 +31,10 @@ type Book implements Node
   @join__type(graph: REVIEWS, key: "id", extension: true)
 {
   id: ID!
+  authorized: Boolean! @join__field(graph: BOOKS) @join__field(graph: REVIEWS, external: true)
   title: String @join__field(graph: BOOKS)
   author: Author @join__field(graph: BOOKS)
-  reviews: [Review] @join__field(graph: REVIEWS)
+  reviews: [Review] @join__field(graph: REVIEWS, requires: "authorized")
 }
 
 scalar join__FieldSet
@@ -61,6 +63,7 @@ interface Node
   @join__type(graph: REVIEWS)
 {
   id: ID!
+  authorized: Boolean!
 }
 
 type Query
@@ -77,5 +80,6 @@ type Review implements Node
   @join__type(graph: REVIEWS)
 {
   id: ID!
+  authorized: Boolean!
   body: String
 }

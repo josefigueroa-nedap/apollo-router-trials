@@ -1,3 +1,0 @@
-plugins:
-  experimental.rhai:
-    filename: "trials.rhai"
